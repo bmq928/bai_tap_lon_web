@@ -1,6 +1,8 @@
 const name = 'person';
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 // const util = require('util');
 
 // const PersonSchema = function () {
@@ -36,6 +38,7 @@ const { Schema } = mongoose;
 const PersonSchema = new Schema({
     username: { type: String, required: true, default: 'nah00' },
     password: { type: String, required: true },
+    _hashAlready: { type: Boolean, default: false },
 
     contact: {
         name: { type: String, required: true },
@@ -45,9 +48,47 @@ const PersonSchema = new Schema({
 
 }, { discriminatorKey: '_type' });
 
-PersonSchema.methods.generatePassword = function () {
-    return 'password';
+
+PersonSchema.pre('save', function (next) {
+    let self = this;
+
+    if(self._hashAlready || !self.password) return next();
+
+    bcrypt.genSalt((err, salt) => {
+        if(err) return next(err);
+
+        bcrypt.hash(self.password, salt, (err, hash) => {
+            if(err) return next(err);
+
+            self.password = hash;
+            self._hashAlready = true;
+            next();
+        })
+    })
+})
+
+PersonSchema.methods.comparePassword = function(password, callback) {
+    let self = this;
+
+    bcrypt.compare(password, self.password, (err, same) => {
+        if(err) callback(err);
+        else callback(null, same);
+    })
 }
 
+PersonSchema.methods.changePassword  = function(newPassword) {
+    this._hashAlready = false;
+    this.password = newPassword;
+}
+
+PersonSchema.generateJwt = function(more){
+
+    let self = this;
+
+    return jwt.sign({
+        username: self.username,
+        more
+    }, process.env.JWT_SECRET)
+}
 
 module.exports = PersonSchema;
