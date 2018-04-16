@@ -11,3 +11,4 @@ require('./admin');
 require('./lecturer');
 require('./partner');
 require('./student');
+require('./seed');

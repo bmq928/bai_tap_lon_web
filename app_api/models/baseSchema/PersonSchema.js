@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 //     Schema.apply(this, arguments);
 
 //     this.add({
-//         username: {type: String, required: true, default: 'nah00'},
+//         mail: {type: String, required: true, default: 'nah00'},
 //         password: {type: String, required: true},
 
 //         contact: {
@@ -36,17 +36,11 @@ const jwt = require('jsonwebtoken');
 
 
 const PersonSchema = new Schema({
-    username: { type: String, required: true, default: 'nah00' },
+    mail: { type: String, required: true, default: 'nah00' },
     password: { type: String, required: true },
-    _hashAlready: { type: Boolean, default: false },
+    _hashAlready: { type: Boolean, default: false }
 
-    contact: {
-        name: { type: String, required: true },
-        birth: { type: Date, required: true },
-        hometown: { type: String, required: true }
-    }
-
-}, { discriminatorKey: '_type' });
+}, { discriminatorKey: '_type'});
 
 
 PersonSchema.pre('save', function (next) {
@@ -86,7 +80,7 @@ PersonSchema.generateJwt = function(more){
     let self = this;
 
     return jwt.sign({
-        username: self.username,
+        mail: self.mail,
         more
     }, process.env.JWT_SECRET)
 }

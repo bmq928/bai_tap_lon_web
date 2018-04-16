@@ -7,14 +7,14 @@ const schema_extend = require('mongoose-schema-extend');
 const studentSchema = PersonSchema.extend({
 
     //admin provide
-    MSSV: {type: Schema.Types.ObjectId, required: true},
+    MSSV: {type: String, required: true, unique: true},
     name: {type: String, required: true},
     birth: {type: Date, required: true},
     address: {type: String, required: true},
-    class: {type: String, required: true},
+    classroom: {type: String, required: true},
     startYear: {type: Number, required: true},
     speciality: {type: String, required: true},
-    vnuMail : {type: String, required: true},
+    // vnuMail : {type: String, required: true},
     averageGrade: {type: Number, default: 0},
     granduatedYear: {type: Number, required: true},
 
@@ -33,7 +33,7 @@ const studentSchema = PersonSchema.extend({
     //addition
     skills: {type: [String], default: []},
     lecturer: {type: Schema.Types.ObjectId}   
-},{_id: false})
+})
 
 
 module.exports = mongoose.model(name, studentSchema);
