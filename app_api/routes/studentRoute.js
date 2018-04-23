@@ -6,5 +6,6 @@ const authMid = require('express-jwt')({
 const studentCtrl = require('../controllers/studentCtrl');
 
 route.get('/getInfo', authMid, studentCtrl.getInfo);
+route.put('/updateInfo', authMid, studentCtrl.updateInfo);
 
 module.exports = route;
