@@ -75,7 +75,7 @@ PersonSchema.methods.changePassword  = function(newPassword) {
     this.password = newPassword;
 }
 
-PersonSchema.generateJwt = function(more){
+PersonSchema.methods.generateJwt = function(more){
 
     let self = this;
 

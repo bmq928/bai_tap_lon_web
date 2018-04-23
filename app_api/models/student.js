@@ -2,7 +2,8 @@ const name = 'student';
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const PersonSchema = require('./baseSchema/PersonSchema');
-const schema_extend = require('mongoose-schema-extend');
+// require('mongoose-schema-extend');
+require('../plugins/mongo-extend');
 
 const studentSchema = PersonSchema.extend({
 
@@ -35,5 +36,6 @@ const studentSchema = PersonSchema.extend({
     lecturer: {type: Schema.Types.ObjectId}   
 })
 
+console.log(studentSchema);
 
 module.exports = mongoose.model(name, studentSchema);

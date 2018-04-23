@@ -2,7 +2,8 @@ const name = 'lecturer';
 const mongoose = require('mongoose');
 // const { Schema } = mongoose;
 // const util = require('util');
-require('mongoose-schema-extend');
+// require('mongoose-schema-extend');
+require('../plugins/mongo-extend');
 const PersonSchema = require('./baseSchema/PersonSchema');
 
 const lecturerSchema = PersonSchema.extend({
