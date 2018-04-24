@@ -7,5 +7,6 @@ const studentCtrl = require('../controllers/studentCtrl');
 
 route.get('/getInfo', authMid, studentCtrl.getInfo);
 route.put('/updateInfo', authMid, studentCtrl.updateInfo);
+route.get('/getSkill', authMid, studentCtrl.getSkill);
 
 module.exports = route;

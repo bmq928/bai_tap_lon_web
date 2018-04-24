@@ -1,4 +1,5 @@
 const Student = require('../models/student');
+const Project = require('../models/project');
 
 
 const getInfo = (req, res) => {
@@ -81,7 +82,7 @@ const updateInfo = (req, res) => {
         expreneced,
         wantToBe,
         note,
-        skills
+        // skills
     } = req.body;
 
     if (!avatar) return res.status(400).json({ message: 'avatar missed' });
@@ -94,7 +95,7 @@ const updateInfo = (req, res) => {
     if (!expreneced) return res.status(400).json({ message: 'expreneced missed' });
     if (!wantToBe) return res.status(400).json({ message: 'wantToBe missed' });
     if (!note) return res.status(400).json({ message: 'note missed' });
-    if (!skills) return res.status(400).json({ message: 'skills missed' });
+    // if (!skills) return res.status(400).json({ message: 'skills missed' });
 
     Student.findOne({ mail }, (err, student) => {
 
@@ -108,7 +109,7 @@ const updateInfo = (req, res) => {
         student.expreneced = expreneced;
         student.wantToBe = wantToBe;
         student.note = note;
-        student.skills = skills;
+        // student.skills = skills;
 
 
 
@@ -120,4 +121,32 @@ const updateInfo = (req, res) => {
     })
 }
 
-module.exports = { getInfo, updateInfo };
+const getSkill = (req, res) => {
+    const { mail } = req.payload;
+
+    Student.findOne({ mail }, (err, student) => {
+        if (err) return res.status(400).json(err);
+
+        const { skills, projects } = student;
+        Project
+            .find({
+                "_id": { $in: projects }
+            })
+            .select('name')
+            .exec((err, resp) => {
+                if(err) return res.status(400).json(err);
+
+                res.status(200).json({
+                    projects: resp.name,
+                    skills
+                })
+            })
+
+    })
+}
+
+module.exports = {
+    getInfo,
+    updateInfo,
+    getSkill
+};

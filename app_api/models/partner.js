@@ -1,12 +1,12 @@
 const name = 'partner';
 const mongoose = require('mongoose');
 // const { Schema } = mongoose;
-// require('mongoose-schema-extend');
-require('../plugins/mongo-extend');
+require('mongoose-schema-extend');
+// require('../plugins/mongo-extend');
 const PersonSchema = require('./baseSchema/PersonSchema');
 
 const partnerSchema = PersonSchema.extend({
-    
+    name: {type: String, required: true}
 })
 
 // const partnerSchema = new Schema({
