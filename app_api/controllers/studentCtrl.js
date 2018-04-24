@@ -128,16 +128,19 @@ const getSkill = (req, res) => {
         if (err) return res.status(400).json(err);
 
         const { skills, projects } = student;
+
+        console.log(projects);
         Project
             .find({
-                "_id": { $in: projects }
+                _id: { $in: projects.map(p => toObjectId(p)) },
+                // _id: "5adecb5edcdd621678cc1e32"
             })
-            .select('name')
+            // .select('name')
             .exec((err, resp) => {
                 if(err) return res.status(400).json(err);
 
                 res.status(200).json({
-                    projects: resp.name,
+                    projects: resp.map(p => p.name),
                     skills
                 })
             })
@@ -150,3 +153,12 @@ module.exports = {
     updateInfo,
     getSkill
 };
+
+
+
+//helper
+function toObjectId (str){
+    const ObjectId = require('mongoose').Types.ObjectId;
+
+    return new ObjectId(str);
+}

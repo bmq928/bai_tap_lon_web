@@ -68,42 +68,31 @@ async function createSeed() {
     await console.log('parnter');
     let count = await Partner.count({}).exec();
 
-    if(!count) await Partner.create(partners);
-    let _partners = await Partner.find({}).exec();
+    if (!count) {
+        await Partner.create(partners);
+        let _partners = await Partner.find({}).exec();
 
-
-
-
-
-    console.log('project');
-    count  = await Project.count({}).exec();
-    if(!count) {
-        for (let i = 0; i< projects.length; ++i) {
+        for (let i = 0; i < projects.length; ++i) {
             projects[i].partnerId = _partners[0]._id;
         }
         await Project.create(projects);
-    }
-    let _projects = await Project.find({}).exec();
+        let _projects = await Project.find({}).exec();
 
 
 
 
-
-    console.log('student');
-    count = await Student.count({}).exec();
-    if(!count) {
         for (let i = 0; i < students.length; ++i) {
             students[i].projects = [_projects[0]._id];
         }
 
         await Student.create(students);
+        let _students = await Student.find({}).exec();
+
+        _students.forEach(s => {
+            _projects[0].students.push(s._id);
+        })
+
+        await Project.create(_projects);
     }
-    let _students = await Student.find({}).exec();
-
-    _students.forEach(s => {
-        _projects[0].students.push(s._id);
-    })
-
-    await Project.create(_projects);
 
 }
