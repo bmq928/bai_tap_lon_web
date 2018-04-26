@@ -69,29 +69,41 @@ async function createSeed() {
     let count = await Partner.count({}).exec();
 
     if (!count) {
+
+        //create partner
         await Partner.create(partners);
         let _partners = await Partner.find({}).exec();
 
+
+        //init project
         for (let i = 0; i < projects.length; ++i) {
-            projects[i].partnerId = _partners[0]._id;
+            projects[i].ownerId = _partners[0]._id;
         }
         await Project.create(projects);
         let _projects = await Project.find({}).exec();
 
 
 
-
+        //init student
         for (let i = 0; i < students.length; ++i) {
             students[i].projects = [_projects[0]._id];
         }
-
         await Student.create(students);
         let _students = await Student.find({}).exec();
 
-        _students.forEach(s => {
-            _projects[0].students.push(s._id);
-        })
 
+        //student add project
+        _students.forEach(s => {
+            _projects[0].students.push({
+                studentId: s._id,
+                grade: 6,
+                comment: 'nhu cut'
+            });
+        });
+
+        //partner add project
+        _partners[0].listProject = [_projects[0]];
+        await Partner.create(_partners);
         await Project.create(_projects);
     }
 

@@ -129,7 +129,6 @@ const getSkill = (req, res) => {
 
         const { skills, projects } = student;
 
-        console.log(projects);
         Project
             .find({
                 _id: { $in: projects.map(p => toObjectId(p)) },
@@ -147,6 +146,8 @@ const getSkill = (req, res) => {
 
     })
 }
+
+
 
 module.exports = {
     getInfo,

@@ -12,4 +12,6 @@ require('./lecturer');
 require('./partner');
 require('./student');
 require('./project');
+require('./internNotif');
+require('./dialog');
 require('./seed');

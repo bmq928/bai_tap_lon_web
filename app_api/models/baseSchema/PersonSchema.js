@@ -38,21 +38,23 @@ const jwt = require('jsonwebtoken');
 const PersonSchema = new Schema({
     mail: { type: String, required: true, default: 'nah00' },
     password: { type: String, required: true },
+    listDialogSend: { type: [Schema.Types.ObjectId], default: [] },
+    listDialogReceive: { type: [Schema.Types.ObjectId], default: [] },
     _hashAlready: { type: Boolean, default: false }
 
-}, { discriminatorKey: '_type'});
+}, { discriminatorKey: '_type' });
 
 
 PersonSchema.pre('save', function (next) {
     let self = this;
 
-    if(self._hashAlready || !self.password) return next();
+    if (self._hashAlready || !self.password) return next();
 
     bcrypt.genSalt((err, salt) => {
-        if(err) return next(err);
+        if (err) return next(err);
 
         bcrypt.hash(self.password, salt, (err, hash) => {
-            if(err) return next(err);
+            if (err) return next(err);
 
             self.password = hash;
             self._hashAlready = true;
@@ -61,21 +63,21 @@ PersonSchema.pre('save', function (next) {
     })
 })
 
-PersonSchema.methods.comparePassword = function(password, callback) {
+PersonSchema.methods.comparePassword = function (password, callback) {
     let self = this;
 
     bcrypt.compare(password, self.password, (err, same) => {
-        if(err) callback(err);
+        if (err) callback(err);
         else callback(null, same);
     })
 }
 
-PersonSchema.methods.changePassword  = function(newPassword) {
+PersonSchema.methods.changePassword = function (newPassword) {
     this._hashAlready = false;
     this.password = newPassword;
 }
 
-PersonSchema.methods.generateJwt = function(more){
+PersonSchema.methods.generateJwt = function (more) {
 
     let self = this;
 

@@ -7,7 +7,7 @@ const TYPE = {
     Partner: 'partner',
     Admin: 'admin',
     Lecturer: 'lecturer'
-}
+};
 
 
 
