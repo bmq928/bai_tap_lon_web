@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 const name = 'internNotif';
 
 const internNotifSchema = new Schema({
+    title: {type: String, required: true},
     ownerId: { type: Schema.Types.ObjectId, required: true },
     content: { type: String, default: '' },
     startTime: { type: Date, required: true },

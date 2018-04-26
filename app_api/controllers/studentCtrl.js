@@ -1,6 +1,6 @@
 const Student = require('../models/student');
 const Project = require('../models/project');
-
+const InternNotif = require('../models/internNotif');
 
 const getInfo = (req, res) => {
     const { mail } = req.payload;
@@ -136,7 +136,7 @@ const getSkill = (req, res) => {
             })
             // .select('name')
             .exec((err, resp) => {
-                if(err) return res.status(400).json(err);
+                if (err) return res.status(400).json(err);
 
                 res.status(200).json({
                     projects: resp.map(p => p.name),
@@ -147,18 +147,49 @@ const getSkill = (req, res) => {
     })
 }
 
+const findNotif = (req, res) => {
+    const { title, ownerId } = req.body;
+
+    if (!title && !ownerId) return res.status(400).json({ message: ' title or owner must be filled' });
+
+    if (!ownerId) {
+        InternNotif
+            .find({ title }, (err, notifs) => sendToClient(err, notifs))
+    } else {
+
+        let query = InternNotif.find({ ownerId });
+        if (title) query = query.find({ title });
+
+        query.exec((err, notifs) => sendToClient(err, notifs));
+
+    }
+
+
+
+
+    function sendToClient(err, notifs) {
+        if (err) return res.status(400).json(err);
+
+        if (!notifs || !notifs.length) return res.status(400).json({ message: 'no content founded' });
+
+        return res.status(200).json({ notifs });
+    }
+}
+
+
 
 
 module.exports = {
     getInfo,
     updateInfo,
-    getSkill
+    getSkill,
+    findNotif
 };
 
 
 
 //helper
-function toObjectId (str){
+function toObjectId(str) {
     const ObjectId = require('mongoose').Types.ObjectId;
 
     return new ObjectId(str);
