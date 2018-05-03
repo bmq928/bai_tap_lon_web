@@ -20,3 +20,6 @@ student:
             note: string,
 
     }
+    +asignForIntern: vd: /api/asignForIntern?id=fldsk  (id là id bài viết mà sinh viên đăng kí)
+    +getSkill : lấy toàn bộ skill của sinh viên
+    +findNotif: phần body có title, ownerId

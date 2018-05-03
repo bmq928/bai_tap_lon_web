@@ -123,6 +123,11 @@ async function createSeed() {
         }
 
         await InternNotif.create(notifs);
+        let _notifs = await InternNotif.find({}).exec();
+
+        //add notif for partner
+        _partners[0].listNotiF.push(_notifs[0]._id);
+        await Partner.create(_partners);
     }
 
 }

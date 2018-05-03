@@ -1,6 +1,9 @@
 const Student = require('../models/student');
 const Project = require('../models/project');
 const InternNotif = require('../models/internNotif');
+const Dialog = require('../models/dialog');
+const Person = require('../models/person');
+const Admin = require('../models/admin');
 
 const getInfo = (req, res) => {
     const { mail } = req.payload;
@@ -176,6 +179,76 @@ const findNotif = (req, res) => {
     }
 }
 
+const asignForIntern = (req, res) => {
+    const studentMail = req.payload.mail;
+    const internNotifId = req.query.id;
+
+    if (!internNotifId) return res.status(400).json({ message: 'id is required' });
+
+    Student
+        .findOne({ mail: studentMail }, (err, student) => {
+
+            if (err) return res.status(400).json(err);
+
+
+            InternNotif.findById(internNotifId, (err, internNotif) => {
+                if (err) return res.status(400).json(err);
+                if (!internNotif) return res.status(400).json({ message: 'no intern founded' });
+
+                //if partner use system
+                internNotif.followers.push(student._id);
+                student.notifFollow.push(internNotif._id);
+
+
+                const emailContent = `
+                sinh vien: ${student.name},
+                MSSV : ${student.MSSV},
+                class: ${student.classroom},
+                phone-number: ${student.phoneNumber}
+            `
+
+                if (!internNotif.ownerId) {
+
+                    //gui thong tin den admin
+                    Admin.findOne({}, (err, admin) => {
+                        const adminId = admin._id;
+                        sendDialog(student._id, adminId, emailContent, (err, message) => {
+                            if (err) res.status(400).json(err);
+                            else res.status(200).json(message);
+                        })
+                    });
+
+                } else {
+                    sendDialog(student._id, internNotif.ownerId, emailContent, (err, message) => {
+                        console.log(err);
+                        if (err) res.status(400).json(err);
+                        else res.status(200).json(message);
+                    })
+                }
+            })
+        })
+
+    async function sendDialog(senderId, receiverId, content, callback) {
+        const dialog = new Dialog({ sender: senderId, receiver: receiverId, content });
+        dialog.save(async (err) => {
+            if (err) return callback(err);
+
+            try {
+                let send = await Person.findById(senderId);
+                let receiv = await Person.findById(receiverId);
+
+                send.listDialogSend.push(dialog._id);
+                receiv.listDialogReceive.push(dialog._id);
+
+                await send.save(err => err ? callback(err) : null);
+                receiv.save(err => err ? callback(err) : callback(null, { message: 'success' }));
+            } catch (e) {
+                callback(e);
+            }
+        })
+    }
+}
+
 
 
 
@@ -183,7 +256,8 @@ module.exports = {
     getInfo,
     updateInfo,
     getSkill,
-    findNotif
+    findNotif,
+    asignForIntern
 };
 
 

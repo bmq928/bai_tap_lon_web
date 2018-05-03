@@ -6,7 +6,7 @@ const schema_extend = require('mongoose-schema-extend');
 
 
 const adminSchema = PersonSchema.extend({
-    
+    foo: String
 })
 
 module.exports = mongoose.model(name, adminSchema);

@@ -9,9 +9,29 @@ const TYPE = {
     Lecturer: 'lecturer'
 };
 
+const findById = async (id) => {
+
+    try {
+        let person;
+
+        if(!person) person = await Admin.findById(id).exec();
+
+        if(!person) person = await Student.findById(id).exec();
+
+        if(!person) person = await Partner.findById(id).exec();
+
+        if(!person) person = await Lecturer.findById(id).exec();
 
 
-const findModel = function (type){
+        return person;
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+
+const findModel = function (type) {
     switch (type) {
         case TYPE.Admin: return Admin;
         case TYPE.Lecturer: return Lecturer;
@@ -27,14 +47,18 @@ const authenticate = async (mail, password, done) => {
     console.log(mail);
     console.log(password);
 
-    await findUser(TYPE.Admin);
-    await findUser(TYPE.Lecturer);
-    await findUser(TYPE.Partner);
-    await findUser(TYPE.Student);
+    try {
+        await findUser(TYPE.Admin);
+        await findUser(TYPE.Lecturer);
+        await findUser(TYPE.Partner);
+        await findUser(TYPE.Student);
+    } catch (err) {
+        return done(err);
+    }
     console.log(hasUser);
 
 
-    if(!hasUser) done(null, false, {message: 'mail invalid'})
+    if (!hasUser) done(null, false, { message: 'mail invalid' })
 
     // const promiseAll = promises => {
     //     return new Promise((resolve, reject) => {
@@ -51,15 +75,15 @@ const authenticate = async (mail, password, done) => {
         if (!hasUser) {
             console.log(type);
             let Model = findModel(type);
-            let user = await Model.findOne({mail}).exec();
+            let user = await Model.findOne({ mail }).exec();
 
-            if(user) {
+            if (user) {
                 console.log(user);
                 hasUser = true;
                 user.comparePassword(password, (err, same) => {
-                    if(err) return done(err);
-                    if(!same) return done (null, false, {message: 'password invalid'});
-                    
+                    if (err) return done(err);
+                    if (!same) return done(null, false, { message: 'password invalid' });
+
                     return done(null, user);
                 })
             }
@@ -68,4 +92,4 @@ const authenticate = async (mail, password, done) => {
 
 };
 
-module.exports = { authenticate, findModel };
+module.exports = { authenticate, findModel, findById };
